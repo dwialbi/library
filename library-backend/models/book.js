@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
     },
     synopsis: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false
     },
     isbn: {
