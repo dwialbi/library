@@ -1,12 +1,12 @@
 const { Op } = require("sequelize")
 const db = require("../models")
+const bcrypt = require("bcrypt")
 const User = db.User
 
 const authController = {
   userRegist: async (req, res) => {
-    // Check nim,username,email must unique
-    // regist
     try {
+      // nim,username,email must unique
       const { NIM, username, email, password } = req.body
       const findUserByNIMOrUsernameOrEmail = await User.findOne({
         where: {
@@ -20,16 +20,20 @@ const authController = {
 
       if (findUserByNIMOrUsernameOrEmail) {
         return res.status(400).json({
-          message: "NIM, Username or email has been used",
+          message: "Credentials has been used",
         })
       }
 
-      // if doesnt use create
+      // hash password
+      const hashPassword = bcrypt.hashSync(password, 5)
+
+      // regist
+      // sync with front end
       const newUser = await User.create({
         NIM,
         username,
         email,
-        password,
+        password: hashPassword,
       })
 
       return res.status(201).json({
@@ -43,8 +47,46 @@ const authController = {
       })
     }
   },
-  userLogin: async (req, res) => {},
-  tokenRenew: async (req, res) => {},
+  userLogin: async (req, res) => {
+    try {
+      const { NIM, password } = req.body
+
+      const findUserByNIM = await User.findOne({
+        where: {
+          NIM,
+        },
+      })
+
+      if (!findUserByNIM) {
+        return res.status(400).json({
+          message: "User not found, try again",
+        })
+      }
+
+      // compare raw data = password with NIM,username,email
+      const validPassword = bcrypt.compareSync(password, findUserByNIM.password)
+
+      if (!validPassword) {
+        return res.status(400).json({
+          message: "Wrong Password!!!",
+        })
+      }
+
+      // delete password property from object response
+      delete findUserByNIM.dataValues.password
+
+      return res.status(201).json({
+        message: "Login Success",
+        data: findUserByNIM,
+      })
+    } catch (err) {
+      console.log(err)
+      return res.status(500).json({
+        message: "Server Error !",
+      })
+    }
+  },
+  tokenRefresh: async (req, res) => {},
 }
 
 module.exports = authController
