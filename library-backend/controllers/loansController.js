@@ -66,6 +66,45 @@ const loansController = {
       });
     }
   },
+  returnLoan: async (req, res) => {
+    try {
+      // PSEUDOCODE
+      /*
+        Get transaction id from request body
+        Find corresponding transaction in the database
+        Update transaction
+      */
+
+      // Get transaction id from request body
+      const { transactionId } = req.body;
+
+      // Find corresponding transaction in the database
+      const transaction = await db.Transaction.findByPk(transactionId);
+      if (!transaction) {
+        return res.status(404).json({
+          message: "Transaction not found",
+        });
+      }
+
+      // Update transaction
+      await transaction.update(
+        { return_date: moment().format("YYYY-MM-DD") },
+        {
+          where: { id: transaction.id },
+        }
+      );
+
+      // Send successful response to client
+      return res.status(201).json({
+        message: "Successfully returned loaned books",
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({
+        message: "Server error",
+      });
+    }
+  },
 };
 
 module.exports = loansController;

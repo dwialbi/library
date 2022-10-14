@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const db = require("./models");
 const loansRoute = require("./routes/loansRoute");
-const { verifyToken } = require("../middleware/authMiddleware"); // ONCE READY FOR TESTING, APPLY TO LOANS ROUTE
+const { verifyToken } = require("./middleware/authMiddleware"); // ONCE READY FOR TESTING, APPLY TO LOANS ROUTE
 
 // Configure PORT
 dotenv.config();

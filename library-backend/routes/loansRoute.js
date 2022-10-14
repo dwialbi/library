@@ -9,4 +9,7 @@ const router = express.Router();
 // Checkout
 router.post("/checkout", loansController.checkout);
 
+// Return loaned books
+router.post("/return", loansController.returnLoan);
+
 module.exports = router;
