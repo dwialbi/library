@@ -62,7 +62,7 @@ const loansController = {
     } catch (err) {
       console.log(err);
       res.status(500).json({
-        message: "server error",
+        message: "Server error",
       });
     }
   },

@@ -1,5 +1,6 @@
 // Imports
 const loansController = require("../controllers/loansController");
+const { verifyToken } = require("../middleware/authMiddleware");
 
 // Create routes for loans
 const express = require("express");
