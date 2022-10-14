@@ -1,6 +1,7 @@
 const { Op } = require("sequelize")
 const db = require("../models")
 const bcrypt = require("bcrypt")
+const { signToken } = require("../lib/jwt")
 const User = db.User
 
 const authController = {
@@ -75,9 +76,14 @@ const authController = {
       // delete password property from object response
       delete findUserByNIM.dataValues.password
 
+      const token = signToken({
+        id: findUserByNIM.id,
+      })
+
       return res.status(201).json({
         message: "Login Success",
         data: findUserByNIM,
+        token,
       })
     } catch (err) {
       console.log(err)
