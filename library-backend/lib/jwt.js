@@ -1,0 +1,16 @@
+const jwt = require("jsonwebtoken")
+
+const SECRET_KEY = "rgs3001"
+
+const signToken = (payload) => {
+  return jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" })
+}
+
+const validToken = (token) => {
+  return jwt.verify(token, SECRET_KEY)
+}
+
+module.exports = {
+  signToken,
+  validToken,
+}
