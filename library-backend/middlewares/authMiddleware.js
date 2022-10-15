@@ -1,7 +1,7 @@
 const { validToken } = require("../lib/jwt")
 
 const verifyToken = (req, res, next) => {
-  let token = req.headeares.authorization
+  let token = req.headers.authorization
 
   if (!token) {
     return res.status(401).json({

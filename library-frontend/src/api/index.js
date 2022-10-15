@@ -1,7 +1,7 @@
 import axios from "axios"
 
-const axioslibrary = axios.create({
+const axiosLibrary = axios.create({
   baseURL: "http://localhost:2000",
 })
 
-export { axioslibrary }
+export { axiosLibrary }

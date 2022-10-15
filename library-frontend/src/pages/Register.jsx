@@ -12,13 +12,14 @@ import {
   Heading,
   Text,
   useColorModeValue,
-  Link,
   useToast,
+  VStack,
 } from "@chakra-ui/react"
+import { Link } from "react-router-dom"
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons"
 import { useState } from "react"
 import { useFormik } from "formik"
-import { axioslibrary } from "../api/index"
+import { axiosLibrary } from "../api/index"
 import * as Yup from "yup"
 import { m } from "framer-motion"
 
@@ -35,7 +36,7 @@ const Register = () => {
     },
     onSubmit: async ({ NIM, username, email, password }) => {
       try {
-        const response = await axioslibrary.post("/auth/register", {
+        const response = await axiosLibrary.post("/auth/register", {
           NIM,
           username,
           email,
@@ -64,18 +65,18 @@ const Register = () => {
 
   return (
     <Flex
-      minH={"100vh"}
+      minH={"100"}
       align={"center"}
       justify={"center"}
       bg={useColorModeValue("gray.50", "gray.800")}
     >
-      <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
+      <Stack spacing={8} mx={"auto"} maxW={"max"} py={12} px={6}>
         <Stack align={"center"}>
           <Heading fontSize={"4xl"} textAlign={"center"}>
-            Sign up
+            Register
           </Heading>
           <Text fontSize={"lg"} color={"gray.600"}>
-            to enjoy our Digital Library
+            to access our Digital Library
           </Text>
         </Stack>
         <Box
@@ -121,7 +122,7 @@ const Register = () => {
                 />
               </FormControl>
 
-              <FormControl id="password" isRequired>
+              <FormControl isRequired>
                 <FormLabel>Password</FormLabel>
                 <InputGroup>
                   <Input
@@ -142,23 +143,27 @@ const Register = () => {
                   </InputRightElement>
                 </InputGroup>
               </FormControl>
+
               <Stack spacing={10} pt={2}>
                 <Button
                   loadingText="Submitting"
                   size="lg"
-                  bg={"blue.400"}
+                  bg={"blue.900"}
                   color={"white"}
                   _hover={{
                     bg: "blue.500",
                   }}
                   type="submit"
                 >
-                  Sign up
+                  Register
                 </Button>
               </Stack>
               <Stack pt={6}>
                 <Text align={"center"}>
-                  Already a user? <Link color={"blue.400"}>Login</Link>
+                  Already a user?
+                  <Link to="/login">
+                    <Text color="blue.400">Login</Text>
+                  </Link>
                 </Text>
               </Stack>
             </Stack>

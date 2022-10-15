@@ -6,12 +6,11 @@ const db = require("./models")
 dotenv.config()
 
 const PORT = process.env.PORT
+const authRoute = require("./routes/authRoute")
 
 const app = express()
 app.use(cors())
 app.use(express.json())
-
-const authRoute = require("./routes/authRoute")
 
 app.use("/auth", authRoute)
 
