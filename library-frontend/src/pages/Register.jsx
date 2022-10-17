@@ -13,7 +13,7 @@ import {
   Text,
   useColorModeValue,
   useToast,
-  VStack,
+  FormErrorMessage,
 } from "@chakra-ui/react"
 import { Link } from "react-router-dom"
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons"
@@ -21,7 +21,6 @@ import { useState } from "react"
 import { useFormik } from "formik"
 import { axiosLibrary } from "../api/index"
 import * as Yup from "yup"
-import { m } from "framer-motion"
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -56,6 +55,18 @@ const Register = () => {
         })
       }
     },
+    validationSchema: Yup.object({
+      NIM: Yup.string().required().min(5),
+      username: Yup.string().required().min(4).max(6),
+      email: Yup.string().required().email(),
+      password: Yup.string()
+        .required()
+        .matches(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
+          "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
+        ),
+    }),
+    validateOnChange: false,
   })
 
   const formChange = ({ target }) => {
@@ -76,7 +87,7 @@ const Register = () => {
             Register
           </Heading>
           <Text fontSize={"lg"} color={"gray.600"}>
-            to access our Digital Library
+            to access Digital Library
           </Text>
         </Stack>
         <Box
@@ -89,7 +100,7 @@ const Register = () => {
             <Stack spacing={4}>
               <HStack>
                 <Box>
-                  <FormControl isRequired>
+                  <FormControl isInvalid={formik.errors.NIM} isRequired>
                     <FormLabel>NIM</FormLabel>
                     <Input
                       name="NIM"
@@ -97,6 +108,7 @@ const Register = () => {
                       value={formik.values.NIM}
                       onChange={formChange}
                     />
+                    <FormErrorMessage>{formik.errors.NIM}</FormErrorMessage>
                   </FormControl>
                 </Box>
                 <Box>
@@ -122,7 +134,7 @@ const Register = () => {
                 />
               </FormControl>
 
-              <FormControl isRequired>
+              <FormControl isInvalid={formik.errors.password} isRequired>
                 <FormLabel>Password</FormLabel>
                 <InputGroup>
                   <Input
@@ -142,11 +154,11 @@ const Register = () => {
                     </Button>
                   </InputRightElement>
                 </InputGroup>
+                <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
               </FormControl>
 
               <Stack spacing={10} pt={2}>
                 <Button
-                  loadingText="Submitting"
                   size="lg"
                   bg={"blue.900"}
                   color={"white"}

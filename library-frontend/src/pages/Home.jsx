@@ -9,6 +9,7 @@ import {
   useColorModeValue,
   createIcon,
 } from "@chakra-ui/react"
+import { Link } from "react-router-dom"
 
 const Home = () => {
   return (
@@ -51,7 +52,7 @@ const Home = () => {
                 bg: "green.500",
               }}
             >
-              Get Started
+              <Link to="/register">Register</Link>
             </Button>
             {/* <Button variant={"link"} colorScheme={"blue"} size={"sm"}>
               Learn more
