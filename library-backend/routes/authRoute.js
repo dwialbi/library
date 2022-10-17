@@ -6,5 +6,6 @@ const router = express.Router()
 router.post("/register", authController.userRegist)
 router.post("/login", authController.userLogin)
 router.get("/refresh-token", verifyToken, authController.tokenRefresh)
+router.get("/verification", authController.verifyUser)
 
 module.exports = router

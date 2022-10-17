@@ -1,14 +1,30 @@
-const { Op } = require("sequelize")
 const db = require("../models")
+const { Op } = require("sequelize")
 const bcrypt = require("bcrypt")
 const { signToken } = require("../lib/jwt")
+const { validationResult } = require("express-validator")
+const { validVerifToken, createVerifToken } = require("../lib/verification")
+const emailer = require("../lib/emailer.js")
+const fs = require("fs")
+const handlebars = require("handlebars")
+
 const User = db.User
 
 const authController = {
   userRegist: async (req, res) => {
     try {
+      const errors = validationResult(req)
+
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          errors: errors.array(),
+          message: "Invalid Fields",
+        })
+      }
+
       // nim,username,email must unique
       const { NIM, username, email, password } = req.body
+
       const findUserByNIMOrUsernameOrEmail = await User.findOne({
         where: {
           [Op.or]: {
@@ -35,6 +51,27 @@ const authController = {
         username,
         email,
         password: hashPassword,
+      })
+
+      const verificationToken = createVerifToken({
+        id: newUser.id,
+      })
+
+      const verificationLink = `http://localhost:2000/auth/verification?verification_token=${verificationToken}`
+
+      // Emailer
+      const rawHTML = fs.readFileSync("templates/register_user.html", "utf-8")
+      const compiledHTML = handlebars.compile(rawHTML)
+      const htmlResult = compiledHTML({
+        username,
+        verificationLink,
+      })
+
+      await emailer({
+        to: email,
+        html: htmlResult,
+        subject: "Verify your Account",
+        text: "Please Verify your Account",
       })
 
       return res.status(201).json({
@@ -112,6 +149,56 @@ const authController = {
       })
     }
   },
+  verifyUser: async (req, res) => {
+    try {
+      const { verification_token } = req.query
+
+      const validToken = validVerifToken(verification_token)
+
+      if (!validToken) {
+        res.status(401).json({
+          message: "Token invalid",
+        })
+      }
+
+      await User.update(
+        { is_verified: true },
+        {
+          where: {
+            id: validToken.id,
+          },
+        }
+      )
+
+      return res.redirect("http://localhost:3000/login")
+    } catch (err) {
+      console.log(err)
+      return res.status(500).json({
+        message: "Server Error!",
+      })
+    }
+  },
+  //   try {
+  //     const { verification_token } = req.query
+
+  //     const validToken = validVerifToken(verification_token)
+
+  //     if (!validToken) {
+  //       return res.status(401).json({
+  //         message: "Token is Invalid!!!",
+  //       })
+  //     }
+
+  //     await User.update({ is_verified: true }, { where: { id: validToken.id } })
+
+  //     return res.redirect("http://localhost:3000/login")
+  //   } catch (err) {
+  //     console.log(err)
+  //     return res.status(500).json({
+  //       message: "Server Error!",
+  //     })
+  //   }
+  // },
 }
 
 module.exports = authController
