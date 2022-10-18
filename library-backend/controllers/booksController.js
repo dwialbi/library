@@ -1,15 +1,30 @@
+const { Op } = require("sequelize")
 const db = require("../models")
 
 module.exports = {
   getAllBooks: async (req, res) => {
     try {
-      const findAllBooks = await db.Book.findAll({
-        attributes: ["title", "author", "publish_year", "image_url", "isbn"],
+      const { _limit = 7, _page = 1} = req.query
+      const findAllBooks = await db.Book.findAndCountAll({
+        where: {
+          title: {
+            [Op.like]: `%${req.query.title || ""}%`
+          }
+        },
+        include: [
+          {model: db.Category}
+        ],
+        limit: Number (_limit),     
+        offset: (_page - 1) * _limit,
+        order: [
+          ['title', 'ASC']
+        ]
       })
 
       res.status(200).json({
         message: "Find all books",
-        data: findAllBooks,
+        data: findAllBooks.rows,
+        dataCount: findAllBooks.count
       })
     } catch (err) {
       console.log(err)
@@ -19,7 +34,7 @@ module.exports = {
     }
   },
 
-  getBooksbyId: async (req, res) => {
+  getBookById: async (req, res) => {
     try {
       const { id } = req.params
       const findBookbyId = await db.Book.findByPk(id)
@@ -35,4 +50,69 @@ module.exports = {
       })
     }
   },
+
+
+  // getBooks: async (req, res) => {
+  //   const page = parseInt(req.query.page) || 0
+  //   const limit = parseInt(req.query.limit) || 0
+  //   const search = req.query.search_query || ""
+  //   const offset = limit * page
+
+  //   const totalRows = await db.Book.count({
+  //     where: {
+  //       title: {
+  //         [Op.like]: '%'+search+'%'
+  //       }}
+  //     })
+    
+
+  //   const totalPage = Math.ceil(totalRows / limit)
+
+  //   const result = await db.Book.findAll({
+  //     where:{
+  //       [Op.or]: [{title: {
+  //         [Op.like]: '%'+search+'%'
+  //       }}]
+  //     },
+  //     offset: offset,
+  //     limit: limit,
+  //     order: [
+  //       ['id', 'DESC']
+  //     ]
+  //   })
+
+  //   res.status(200).json({
+  //     result: result,
+  //     page: page,
+  //     limit: limit,
+  //     totalRows: totalRows,
+  //     totalPage: totalPage
+  //   })
+
+  // },
+
+  // addBook: async (req, res) => {
+  //   try{
+
+  //     //publish_year, stock, image_url, synopsis, isbn, CategoyId
+
+  //     const { title, author} = req.query
+
+  //     const newBook = await db.Book.create({
+  //       title, 
+  //       author, 
+  //     })
+
+  //     return res.status(200).json({
+  //       message: "book added",
+  //       data: newBook
+  //     })
+
+  //   }catch (err) {
+  //     console.log(err)
+  //     return res.status(500).json({
+  //       message: "Server error"
+  //     })
+  //   }
+  // }
 }
