@@ -4,7 +4,7 @@ const db = require("../models")
 module.exports = {
   getAllBooks: async (req, res) => {
     try {
-      const { _limit = 7, _page = 1} = req.query
+      const { _limit, _page, _sortDir = ASC} = req.query
       const findAllBooks = await db.Book.findAndCountAll({
         where: {
           title: {
@@ -13,11 +13,11 @@ module.exports = {
         },
         include: [
           {model: db.Category}
-        ],
+        ], 
         limit: Number (_limit),     
         offset: (_page - 1) * _limit,
         order: [
-          ['title', 'ASC']
+          ['title', _sortDir]
         ]
       })
 

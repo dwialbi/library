@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Container,
+  FormControl,
   Heading,
   HStack,
   Input,
@@ -14,11 +15,27 @@ import { axiosInstance } from "../api"
 
 export const BooksList = () => {
   const [books, setBooks] = useState([])
+  const [page, setPage] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
 
   const fetchBooks = async () => {
     try {
-      const response = await axiosInstance.get("/books")
-      setBooks(response.data.data)
+      const response = await axiosInstance.get("/books", {
+        params: {
+          _limit: 2,
+          _page: page,
+          _sortDir: "ASC"
+        },
+      })
+
+      setTotalCount(response.data.dataCount)
+
+      if(page === 1) {
+        setBooks(response.data.data)
+      } else {
+        setBooks([...books, ...response.data.data])
+      }
+
     } catch (err) {
       console.log(err)
     }
@@ -41,19 +58,38 @@ export const BooksList = () => {
     })
   }
 
+  const seeMoreButtonHandler = () => {
+    setPage(page + 1)
+  }
+
   useEffect(() => {
     fetchBooks()
-  }, [])
+  }, [page])
 
   return (
     <Box>
       <Container marginTop={"100px"}>
-        <HStack>
-          <Input placeholder="type book title"/>
-          <Button colorScheme={"orange"} >Search</Button>
-        </HStack>
+        <FormControl>
+          <HStack>
+            <Input placeholder="type book title" />
+            <Button colorScheme={"orange"}>Search</Button>
+          </HStack>
+        </FormControl>
       </Container>
-      {renderBookRow()}
+      <VStack marginBottom={"100px"}>
+        {renderBookRow()}
+        {books.length >= totalCount ? null : (
+          <Button
+            onClick={seeMoreButtonHandler}
+            colorScheme={"orange"}
+            m="100px"
+            width={"50%"}
+            border="1px"
+          >
+            See More
+          </Button>
+        )}
+      </VStack>
     </Box>
   )
 }
