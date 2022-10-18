@@ -14,8 +14,9 @@ import {
   useColorModeValue,
   useToast,
   FormErrorMessage,
+  Link as LinkChakra,
 } from "@chakra-ui/react"
-import { Link } from "react-router-dom"
+import { Link as LinkRouterDom } from "react-router-dom"
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons"
 import { useState } from "react"
 import { useFormik } from "formik"
@@ -56,11 +57,17 @@ const Register = () => {
       }
     },
     validationSchema: Yup.object({
-      NIM: Yup.string().required().min(5),
-      username: Yup.string().required().min(4).max(6),
-      email: Yup.string().required().email(),
+      NIM: Yup.string()
+        .required("NIM is Empty")
+        .min(5, "NIM is Too Short!")
+        .max(6, "NIM is Too Long!"),
+      username: Yup.string()
+        .required("Username is Empty")
+        .min(4, "Username is Too Short!")
+        .max(10, "Username is Too Long!"),
+      email: Yup.string().required("Email is Empty").email(),
       password: Yup.string()
-        .required()
+        .required("Password is empty")
         .matches(
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
           "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
@@ -100,7 +107,7 @@ const Register = () => {
             <Stack spacing={4}>
               <HStack>
                 <Box>
-                  <FormControl isInvalid={formik.errors.NIM} isRequired>
+                  <FormControl isInvalid={formik.errors.NIM}>
                     <FormLabel>NIM</FormLabel>
                     <Input
                       name="NIM"
@@ -112,7 +119,7 @@ const Register = () => {
                   </FormControl>
                 </Box>
                 <Box>
-                  <FormControl isRequired>
+                  <FormControl isInvalid={formik.errors.username}>
                     <FormLabel>Username</FormLabel>
                     <Input
                       name="username"
@@ -120,11 +127,14 @@ const Register = () => {
                       value={formik.values.username}
                       onChange={formChange}
                     />
+                    <FormErrorMessage>
+                      {formik.errors.username}
+                    </FormErrorMessage>
                   </FormControl>
                 </Box>
               </HStack>
 
-              <FormControl id="email" isRequired>
+              <FormControl isInvalid={formik.errors.email}>
                 <FormLabel>Email</FormLabel>
                 <Input
                   name="email"
@@ -132,9 +142,10 @@ const Register = () => {
                   value={formik.values.email}
                   onChange={formChange}
                 />
+                <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
               </FormControl>
 
-              <FormControl isInvalid={formik.errors.password} isRequired>
+              <FormControl isInvalid={formik.errors.password}>
                 <FormLabel>Password</FormLabel>
                 <InputGroup>
                   <Input
@@ -173,9 +184,11 @@ const Register = () => {
               <Stack pt={6}>
                 <Text align={"center"}>
                   Already a user?
-                  <Link to="/login">
-                    <Text color="blue.400">Login</Text>
-                  </Link>
+                  <LinkChakra to="/login">
+                    <Text color="blue.400">
+                      <LinkRouterDom to="/login">Login</LinkRouterDom>
+                    </Text>
+                  </LinkChakra>
                 </Text>
               </Stack>
             </Stack>

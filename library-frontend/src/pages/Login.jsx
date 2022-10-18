@@ -20,6 +20,7 @@ import { useDispatch } from "react-redux"
 import { axiosLibrary } from "../api"
 import { login } from "../redux/features/authSlice"
 import { useNavigate } from "react-router-dom"
+import * as Yup from "yup"
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -62,6 +63,17 @@ const LoginPage = () => {
         })
       }
     },
+    validationSchema: Yup.object({
+      NIM: Yup.string()
+        .required("NIM is empty")
+        .min(5, "more than 4 characters"),
+      password: Yup.string()
+        .required("Password is empty")
+        .matches(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
+          "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
+        ),
+    }),
   })
 
   const formChange = ({ target }) => {
