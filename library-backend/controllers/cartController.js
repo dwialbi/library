@@ -49,7 +49,6 @@ const cartController = {
         })
       } else {
         const newCart = await Cart.create({
-          UserId,
           BookId,
         })
         return res.status(201).json({
