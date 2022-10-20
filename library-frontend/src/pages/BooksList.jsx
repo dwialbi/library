@@ -9,33 +9,50 @@ import {
   Heading,
   HStack,
   Input,
+  useToast,
   VStack,
 } from "@chakra-ui/react"
 import { axiosInstance } from "../api"
+import { Link } from "react-router-dom"
 
 export const BooksList = () => {
   const [books, setBooks] = useState([])
   const [page, setPage] = useState(1)
   const [totalCount, setTotalCount] = useState(0)
+  const [searchInput, setSearchInput] = useState("")
+  const toast = useToast()
+  const [searchValue, setSearchValue] = useState("")
 
   const fetchBooks = async () => {
     try {
-      const response = await axiosInstance.get("/books", {
+      const response = await axiosInstance.get(`/books`, {
         params: {
           _limit: 2,
           _page: page,
-          _sortDir: "ASC"
+          _sortDir: "ASC",
+          title: searchValue,
         },
       })
 
       setTotalCount(response.data.dataCount)
 
-      if(page === 1) {
+      setBooks(response.data.data)
+
+      if (page === 1) {
         setBooks(response.data.data)
       } else {
         setBooks([...books, ...response.data.data])
       }
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
+  const deleteBtnHandler = async (id) => {
+    try {
+      await axiosInstance.delete(`/books/${id}`)
+      fetchBooks()
+      toast({ title: "Book deleted", status: "info" })
     } catch (err) {
       console.log(err)
     }
@@ -45,7 +62,6 @@ export const BooksList = () => {
     return books.map((val) => {
       return (
         <BookRow
-          // key={val.id.toString()}
           id={val.id}
           title={val.title}
           author={val.author}
@@ -53,6 +69,7 @@ export const BooksList = () => {
           publish_year={val.publish_year}
           category={val.Category.name}
           image_url={val.image_url}
+          onDelete={() => deleteBtnHandler(val.id)}
         />
       )
     })
@@ -64,17 +81,37 @@ export const BooksList = () => {
 
   useEffect(() => {
     fetchBooks()
-  }, [page])
+  }, [page, searchValue])
 
   return (
     <Box>
       <Container marginTop={"100px"}>
-        <FormControl>
-          <HStack>
-            <Input placeholder="type book title" />
-            <Button colorScheme={"orange"}>Search</Button>
-          </HStack>
-        </FormControl>
+        <Container>
+          <FormControl>
+            <HStack>
+              <Input
+                type="search"
+                placeholder="type book title"
+                onChange={(e) => setSearchInput(e.target.value)}
+                value={searchInput}
+              />
+              <Button
+                colorScheme={"orange"}
+                onClick={() => {
+                  setSearchValue(searchInput)
+                  setPage(1)
+                }}
+              >
+                Search
+              </Button>
+            </HStack>
+          </FormControl>
+          <Link to={`/add`}>
+            <Button width="100%" mt="4" colorScheme={"blackAlpha"}>
+              Add Book
+            </Button>
+          </Link>
+        </Container>
       </Container>
       <VStack marginBottom={"100px"}>
         {renderBookRow()}

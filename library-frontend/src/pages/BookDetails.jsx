@@ -1,7 +1,8 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import {
   Box,
   Heading,
+  Link,
   Image,
   Text,
   Divider,
@@ -14,32 +15,33 @@ import {
   Container,
   VStack,
   Button,
-  useToast,
 } from "@chakra-ui/react"
-import { Link } from "react-router-dom"
 import { axiosInstance } from "../api"
+import { useParams } from "react-router-dom"
 
+const BookDetails = () => {
+  const [book, setBook] = useState({})
+  const params = useParams()
 
+  const fetchBookDetails = async () => {
+    try {
+      const response = await axiosInstance.get(`/books/${params.id}`)
 
-const BookRow = ({
-  title,
-  author,
-  publish_year,
-  image_url,
-  synopsis,
-  category,
-  id,
-  onDelete
-}) => {
+      setBook(response.data.data)
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
-    const confirmDeleteBtnHandler = () => {
-        onDelete()
-      }
+  useEffect(() => {
+    fetchBookDetails()
+  }, [])
 
   return (
-    
-    <Container maxW={"7xl"} p="5">
+    <Container maxW={"7xl"} p="2" mt="100px">
+
       <Box
+        //marginTop={{ base: '3', sm: '' }}
         display="flex"
         flexDirection={{ base: "column", sm: "row" }}
         justifyContent="space-between"
@@ -57,12 +59,12 @@ const BookRow = ({
             marginLeft={{ base: "0", sm: "5%" }}
             marginTop="5%"
           >
-            <Link to={`/books/${id}`} >
+            <Link textDecoration="none" _hover={{ textDecoration: "none" }}>
               <Image
                 borderRadius="lg"
-                height="300px"
+                height="500px"
                 width="100%"
-                src={image_url}
+                src={book.image_url}
                 alt="some good alt text"
                 objectFit="contain"
               />
@@ -89,12 +91,12 @@ const BookRow = ({
         >
           <HStack spacing={2}>
             <Tag size={"md"} variant="solid" colorScheme="orange">
-              {category}
+              {book?.Category?.name}
             </Tag>
           </HStack>
           <Heading marginTop="1" size={"lg"}>
-            <Link to={`/books/${id}`}>
-              {title}
+            <Link textDecoration="none" _hover={{ textDecoration: "none" }}>
+              {book.title}
             </Link>
           </Heading>
           <Text
@@ -103,36 +105,20 @@ const BookRow = ({
             color={useColorModeValue("gray.700", "gray.200")}
             fontSize="lg"
           >
-            {synopsis || "synopsis"}
-            <Link to={`/books/${id}`}> ...see more</Link>
+            {book.synopsis || "synopsis"}
           </Text>
+         
           <HStack marginTop="2" spacing="2" display="flex">
-            <Text fontWeight="medium">{author || "author"}, author</Text>
+            <Text fontWeight="medium">{book.author || "author"}, author</Text>
             <Text>—</Text>
-            <Text>{publish_year || "publish_year"}</Text>
+            <Text>{book.publish_year || "publish_year"}</Text>
           </HStack>
+          <Text mt="2" mb="10">ISBN: {book.isbn}</Text>
+          
 
-          <HStack>
           <Button colorScheme="orange" mt={"2"} width={"100px"}>
             Add to cart
           </Button>
-          <Link to={`/edit/${id}`}>
-          <Button colorScheme="blackAlpha" mt={"2"} width={"100px"}>
-            Edit
-          </Button>
-          </Link>
-          <Link>
-          
-          <Button 
-          onClick={confirmDeleteBtnHandler}
-          colorScheme="blackAlpha" 
-          mt={"2"} 
-          width={"100px"}>
-            Delete
-          </Button>
-          </Link>
-          
-          </HStack>
         </Box>
       </Box>
       <Divider marginTop={"50px"} />
@@ -140,4 +126,4 @@ const BookRow = ({
   )
 }
 
-export default BookRow
+export default BookDetails

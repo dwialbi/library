@@ -4,7 +4,7 @@ const db = require("../models")
 module.exports = {
   getAllBooks: async (req, res) => {
     try {
-      const { _limit, _page, _sortDir = ASC} = req.query
+      const { _limit = 2, _page = 1, _sortDir = "DESC"} = req.query
       const findAllBooks = await db.Book.findAndCountAll({
         where: {
           title: {
@@ -36,8 +36,14 @@ module.exports = {
 
   getBookById: async (req, res) => {
     try {
-      const { id } = req.params
-      const findBookbyId = await db.Book.findByPk(id)
+      const findBookbyId = await db.Book.findOne({
+        where: {
+          id: req.params.id
+        },
+        include: [
+          {model: db.Category}
+        ]
+      })
 
       res.status(200).json({
         message: "Find book by ID",
@@ -51,68 +57,54 @@ module.exports = {
     }
   },
 
+  addBook: async (req, res) => {
+    try {
+      await db.Book.create(req.body)
+      res.status(201).json({
+        message: "Book added",
+      })
+    } catch (err) {
+      console.log(err)
+      return res.status(500).json({
+        message: "Server error",
+      })
+    }
+  },
 
-  // getBooks: async (req, res) => {
-  //   const page = parseInt(req.query.page) || 0
-  //   const limit = parseInt(req.query.limit) || 0
-  //   const search = req.query.search_query || ""
-  //   const offset = limit * page
+  updateBook: async (req, res) => {
+    try {
+      await db.Book.update(req.body, {
+        where: {
+          id: req.params.id
+        }
+      })
+      res.status(200).json({
+        message: "Book updated",
+      })
+    } catch (err) {
+      console.log(err)
+      return res.status(500).json({
+        message: "Server error",
+      })
+    }
+  },
 
-  //   const totalRows = await db.Book.count({
-  //     where: {
-  //       title: {
-  //         [Op.like]: '%'+search+'%'
-  //       }}
-  //     })
-    
+  deleteBook: async (req, res) => {
+    try {
+      await db.Book.destroy({
+        where: {
+          id: req.params.id
+        }
+      })
+      res.status(200).json({
+        message: "Book deleted",
+      })
+    } catch (err) {
+      console.log(err)
+      return res.status(500).json({
+        message: "Server error",
+      })
+    }
+  },
 
-  //   const totalPage = Math.ceil(totalRows / limit)
-
-  //   const result = await db.Book.findAll({
-  //     where:{
-  //       [Op.or]: [{title: {
-  //         [Op.like]: '%'+search+'%'
-  //       }}]
-  //     },
-  //     offset: offset,
-  //     limit: limit,
-  //     order: [
-  //       ['id', 'DESC']
-  //     ]
-  //   })
-
-  //   res.status(200).json({
-  //     result: result,
-  //     page: page,
-  //     limit: limit,
-  //     totalRows: totalRows,
-  //     totalPage: totalPage
-  //   })
-
-  // },
-
-  // addBook: async (req, res) => {
-  //   try{
-
-  //     //publish_year, stock, image_url, synopsis, isbn, CategoyId
-
-  //     const { title, author} = req.query
-
-  //     const newBook = await db.Book.create({
-  //       title, 
-  //       author, 
-  //     })
-
-  //     return res.status(200).json({
-  //       message: "book added",
-  //       data: newBook
-  //     })
-
-  //   }catch (err) {
-  //     console.log(err)
-  //     return res.status(500).json({
-  //       message: "Server error"
-  //     })
-  //   }
-  // }
 }
