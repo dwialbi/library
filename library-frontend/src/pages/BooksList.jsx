@@ -51,10 +51,11 @@ export const BooksList = () => {
     }
   }
 
-  const deleteBtnHandler = async (id) => {
+  const deleteBook = async (id) => {
     try {
       await axiosInstance.delete(`/books/${id}`)
       fetchBooks()
+      setPage(1)
       toast({ title: "Book deleted", status: "info" })
     } catch (err) {
       console.log(err)
@@ -72,7 +73,7 @@ export const BooksList = () => {
           publish_year={val.publish_year}
           category={val.Category.name}
           image_url={val.image_url}
-          onDelete={() => deleteBtnHandler(val.id)}
+          onDelete={() => deleteBook(val.id)}
         />
       )
     })
@@ -85,6 +86,12 @@ export const BooksList = () => {
   const sortBtnHandler = (e) => {
     const selectedSort = e.target.value
     setSort(selectedSort)
+    setPage(1)
+  }
+
+  const searchBtnHandler = () => {
+    setSearchValue(searchInput)
+    setPage(1)
   }
 
   useEffect(() => {
@@ -93,36 +100,32 @@ export const BooksList = () => {
 
   return (
     <Box>
-      <Container marginTop={"100px"} >
-          <FormControl>
-            <HStack>
-              <Input
-                type="search"
-                placeholder="type book title"
-                onChange={(e) => setSearchInput(e.target.value)}
-                value={searchInput}
-              />
-              <Button
-                colorScheme={"orange"}
-                onClick={() => {
-                  setSearchValue(searchInput)
-                  setPage(1)
-                }}
-              >
-                Search
-              </Button>
-            </HStack>
-          </FormControl>
-          <Link to={`/add`}>
-            <Button width="100%" mt="4" colorScheme={"blackAlpha"} mb="5">
-              Add Book
+      <Container marginTop={"100px"}>
+        <FormControl>
+          <HStack>
+            <Input
+              type="search"
+              placeholder="type book title"
+              onChange={(e) => setSearchInput(e.target.value)}
+              value={searchInput}
+            />
+            <Button
+              colorScheme={"orange"}
+              onClick={searchBtnHandler}
+            >
+              Search
             </Button>
-          </Link>
+          </HStack>
+        </FormControl>
+        <Link to={`/add`}>
+          <Button width="100%" mt="4" colorScheme={"blackAlpha"} mb="5">
+            Add Book
+          </Button>
+        </Link>
       </Container>
 
-      
-      <VStack marginBottom={"100px"} >
-        <HStack  w="65%" justifyContent={"flex-end"} mt="4">
+      <VStack marginBottom={"100px"}>
+        <HStack w="65%" justifyContent={"flex-end"} mt="4">
           <Text>Sort:</Text>
           <Select onChange={sortBtnHandler} value={sort} w="150px">
             <option value="ASC">A - Z</option>
@@ -136,7 +139,6 @@ export const BooksList = () => {
             colorScheme={"orange"}
             m="100px"
             width={"50%"}
-            
           >
             See More
           </Button>

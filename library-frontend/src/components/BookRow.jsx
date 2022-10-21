@@ -32,7 +32,7 @@ const BookRow = ({
   onDelete
 }) => {
 
-    const confirmDeleteBtnHandler = () => {
+    const deleteBtnHandler = () => {
         onDelete()
       }
 
@@ -124,7 +124,7 @@ const BookRow = ({
           <Link>
           
           <Button 
-          onClick={confirmDeleteBtnHandler}
+          onClick={deleteBtnHandler}
           colorScheme="blackAlpha" 
           mt={"2"} 
           width={"100px"}>
