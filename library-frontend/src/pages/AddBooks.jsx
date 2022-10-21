@@ -11,7 +11,7 @@ import {
 import React, { useState } from "react"
 import axios from "axios"
 import { useFormik } from "formik"
-import { axiosInstance } from "../api"
+import { axiosLibrary } from "../api"
 import * as Yup from "yup"
 
 
@@ -41,7 +41,7 @@ const AddBooks = () => {
       CategoryId,
     }) => {
       try {
-        const response = await axiosInstance.post("/books", {
+        const response = await axiosLibrary.post("/books", {
           title,
           author,
           publish_year,

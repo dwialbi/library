@@ -14,7 +14,7 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react"
-import { axiosInstance } from "../api"
+import { axiosLibrary } from "../api"
 import { Link } from "react-router-dom"
 
 export const BooksList = () => {
@@ -28,7 +28,7 @@ export const BooksList = () => {
 
   const fetchBooks = async () => {
     try {
-      const response = await axiosInstance.get(`/books`, {
+      const response = await axiosLibrary.get(`/books`, {
         params: {
           _limit: 5,
           _page: page,
@@ -53,7 +53,7 @@ export const BooksList = () => {
 
   const deleteBook = async (id) => {
     try {
-      await axiosInstance.delete(`/books/${id}`)
+      await axiosLibrary.delete(`/books/${id}`)
       fetchBooks()
       setPage(1)
       toast({ title: "Book deleted", status: "info" })

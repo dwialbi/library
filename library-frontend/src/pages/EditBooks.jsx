@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react"
 import React, { useState, useEffect } from "react"
 import { useFormik } from "formik"
-import { axiosInstance } from "../api"
+import { axiosLibrary } from "../api"
 import { useParams } from "react-router-dom"
 
 const EditBooks = () => {
@@ -20,7 +20,7 @@ const EditBooks = () => {
 
   const fetchBook = async () => {
     try {
-      const response = await axiosInstance.get(`/books/${params.id}`)
+      const response = await axiosLibrary.get(`/books/${params.id}`)
 
       setBook(response.data.data)
 
@@ -79,7 +79,7 @@ const EditBooks = () => {
           CategoryId,
         }
 
-        const response = await axiosInstance.patch(`/books/${book.id}`,editedBook)
+        const response = await axiosLibrary.patch(`/books/${book.id}`,editedBook)
 
         fetchBook()
 

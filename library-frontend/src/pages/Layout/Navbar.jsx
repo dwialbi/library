@@ -33,7 +33,6 @@ import { axiosLibrary } from "../../api"
 import LoginPage from "../../pages/Login"
 import Register from "../../pages/Register"
 import Home from "../../pages/Home"
-import BookPage from "../../pages/Book"
 
 const Links = ["Home", "Books", "About"]
 
@@ -115,9 +114,14 @@ const Navbar = () => {
                 <LinkRouterDom to="/">Home</LinkRouterDom>
               </NavLink>
               <NavLink>
-                <LinkRouterDom to="/book">Book</LinkRouterDom>
+                <LinkRouterDom to="/booklist">Book</LinkRouterDom>
               </NavLink>
               <NavLink>About</NavLink>
+              {authSelector.username ? null : (
+                <NavLink>
+                  <LinkRouterDom to="/login">Login</LinkRouterDom>
+                </NavLink>
+              )}
             </HStack>
           </HStack>
 
@@ -160,7 +164,7 @@ const Navbar = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/navbar" element={<Navbar />} />
-        <Route path="/book" element={<BookPage />} />
+        {/* <Route path="/book" element={<BookPage />} /> */}
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<LoginPage />} />
       </Routes>

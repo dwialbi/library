@@ -8,13 +8,15 @@ import Navbar from "./pages/Layout/Navbar";
 
 function App() {
   return (
+    <>
   <Navbar />
    <Routes>
-    <Route path="/" element={<BooksList/>}/>
+    <Route path="/booklist" element={<BooksList/>}/>
     <Route path="/add" element={<AddBooks/>}/>
     <Route path="/edit/:id" element={<EditBooks/>}/>
     <Route path="/books/:id" element={<BookDetails/>}/>
    </Routes>
+    </>
     
   );
 }

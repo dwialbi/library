@@ -8,10 +8,11 @@ import {
   FormLabel,
   Heading,
   Input,
-  Link,
+  Link as LinkChakra,
   Stack,
   Image,
   useToast,
+  Text,
 } from "@chakra-ui/react"
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons"
 import { useFormik } from "formik"
@@ -19,14 +20,14 @@ import { useState } from "react"
 import { useDispatch } from "react-redux"
 import { axiosLibrary } from "../api"
 import { login } from "../redux/features/authSlice"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link as LinkRouterDom } from "react-router-dom"
 import * as Yup from "yup"
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false)
   const toast = useToast()
   const dispatch = useDispatch()
-  // const navigate = useNavigate()
+  const navigate = useNavigate()
 
   const formik = useFormik({
     initialValues: {
@@ -53,7 +54,7 @@ const LoginPage = () => {
           description: response.data.message,
           status: "success",
         })
-        // navigate("/")
+         navigate("/booklist")
       } catch (err) {
         console.log(err)
         toast({
@@ -130,11 +131,21 @@ const LoginPage = () => {
                   justify={"space-between"}
                 >
                   <Checkbox>Remember me</Checkbox>
-                  <Link color={"blue.500"}>Forgot password?</Link>
+                  <LinkChakra color={"blue.500"}>Forgot password?</LinkChakra>
                 </Stack>
                 <Button type="submit" colorScheme={"green"} variant={"solid"}>
                   Log in
                 </Button>
+                <Stack>
+                  <Text align={"center"}>
+                    Don't Have account ?
+                    <LinkChakra to="/login">
+                      <Text color="blue.400">
+                        <LinkRouterDom to="/register">Register</LinkRouterDom>
+                      </Text>
+                    </LinkChakra>
+                  </Text>
+                </Stack>
               </Stack>
             </form>
           </Stack>
