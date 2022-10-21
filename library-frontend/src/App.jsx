@@ -1,23 +1,44 @@
-import logo from "./logo.svg"
-import "./App.css"
+import { Box } from "@chakra-ui/react"
+import { Routes, Route } from "react-router-dom"
 
-const app = () => {
+// import HomePage from "./pages/Home"
+import Cart from "./pages/Cart"
+import GuestRoute from "./components/GuestRoute"
+import CategoryEdit from "./pages/CategoryEdit"
+import CategoryList from "./pages/CategoryList"
+
+const App = () => {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <ToastContainer />
-        <NavBar />
-        <div className="content-container">
-          <Switch>
-            <Route path="/cart" component={Cart} />
-            <Route path="/not-found" component={NotFound} />
-            <Route path="/" exact component={Home} />
-            <Redirect to="/not-found" />
-          </Switch>
-        </div>
-      </BrowserRouter>
-    </div>
+    <Box>
+      <Routes>
+        {/* <Route path="/" element={<HomePage />} /> */}
+        <Route
+          path="/carts"
+          element={
+            <GuestRoute>
+              <Cart />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/categories"
+          element={
+            <GuestRoute>
+              <CategoryList />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/categories/:id"
+          element={
+            <GuestRoute>
+              <CategoryEdit />
+            </GuestRoute>
+          }
+        />
+      </Routes>
+    </Box>
   )
 }
 
-export default app
+export default App
