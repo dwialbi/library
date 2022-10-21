@@ -16,7 +16,7 @@ import {
   VStack,
   Button,
 } from "@chakra-ui/react"
-import { axiosInstance } from "../api"
+import { axiosLibrary } from "../api"
 import { useParams } from "react-router-dom"
 
 const BookDetails = () => {
@@ -25,7 +25,7 @@ const BookDetails = () => {
 
   const fetchBookDetails = async () => {
     try {
-      const response = await axiosInstance.get(`/books/${params.id}`)
+      const response = await axiosLibrary.get(`/books/${params.id}`)
 
       setBook(response.data.data)
     } catch (err) {
