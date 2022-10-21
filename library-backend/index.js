@@ -4,7 +4,7 @@ const cors = require("cors")
 const db = require("./models")
 const loansRoute = require("./routes/loansRoute")
 const cartRoute = require("./routes/cartRoute")
-const bookRoute = require("./routes/bookRoute")
+const categoryRoute = require("./routes/categoryRoute")
 
 dotenv.config()
 const PORT = process.env.PORT
@@ -17,7 +17,7 @@ app.use("/loan", loansRoute)
 
 app.use("/carts", cartRoute)
 
-app.use("/books", bookRoute)
+app.use("/categories", categoryRoute)
 
 app.listen(PORT, () => {
   db.sequelize.sync({ alter: true })
