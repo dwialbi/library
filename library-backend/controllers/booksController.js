@@ -4,7 +4,7 @@ const db = require("../models")
 module.exports = {
   getAllBooks: async (req, res) => {
     try {
-      const { _limit = 2, _page = 1, _sortDir = "DESC"} = req.query
+      const { _limit = 5, _page = 1, _sortDir = "DESC"} = req.query
       const findAllBooks = await db.Book.findAndCountAll({
         where: {
           title: {

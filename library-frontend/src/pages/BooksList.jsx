@@ -9,6 +9,8 @@ import {
   Heading,
   HStack,
   Input,
+  Select,
+  Text,
   useToast,
   VStack,
 } from "@chakra-ui/react"
@@ -22,14 +24,15 @@ export const BooksList = () => {
   const [searchInput, setSearchInput] = useState("")
   const toast = useToast()
   const [searchValue, setSearchValue] = useState("")
+  const [sort, setSort] = useState("ASC")
 
   const fetchBooks = async () => {
     try {
       const response = await axiosInstance.get(`/books`, {
         params: {
-          _limit: 2,
+          _limit: 5,
           _page: page,
-          _sortDir: "ASC",
+          _sortDir: sort,
           title: searchValue,
         },
       })
@@ -79,14 +82,18 @@ export const BooksList = () => {
     setPage(page + 1)
   }
 
+  const sortBtnHandler = (e) => {
+    const selectedSort = e.target.value
+    setSort(selectedSort)
+  }
+
   useEffect(() => {
     fetchBooks()
-  }, [page, searchValue])
+  }, [page, searchValue, sort])
 
   return (
     <Box>
-      <Container marginTop={"100px"}>
-        <Container>
+      <Container marginTop={"100px"} >
           <FormControl>
             <HStack>
               <Input
@@ -107,13 +114,21 @@ export const BooksList = () => {
             </HStack>
           </FormControl>
           <Link to={`/add`}>
-            <Button width="100%" mt="4" colorScheme={"blackAlpha"}>
+            <Button width="100%" mt="4" colorScheme={"blackAlpha"} mb="5">
               Add Book
             </Button>
           </Link>
-        </Container>
       </Container>
-      <VStack marginBottom={"100px"}>
+
+      
+      <VStack marginBottom={"100px"} >
+        <HStack  w="65%" justifyContent={"flex-end"} mt="4">
+          <Text>Sort:</Text>
+          <Select onChange={sortBtnHandler} value={sort} w="150px">
+            <option value="ASC">A - Z</option>
+            <option value="DESC">Z - A</option>
+          </Select>
+        </HStack>
         {renderBookRow()}
         {books.length >= totalCount ? null : (
           <Button
@@ -121,7 +136,7 @@ export const BooksList = () => {
             colorScheme={"orange"}
             m="100px"
             width={"50%"}
-            border="1px"
+            
           >
             See More
           </Button>
