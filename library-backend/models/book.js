@@ -33,13 +33,13 @@ module.exports = (sequelize, DataTypes) => {
       },
       image_url: {
         type: DataTypes.STRING,
-        allowNull: false,
-      },
-      synopsis: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      isbn: {
+        allowNull: false
+    },
+    synopsis: {
+        type: DataTypes.TEXT,
+        allowNull: false
+    },
+    isbn: {
         type: DataTypes.STRING,
         allowNull: false,
       },

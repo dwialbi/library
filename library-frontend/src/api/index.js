@@ -1,4 +1,5 @@
 import axios from "axios"
+
 import { logout } from "../redux/features/authSlice"
 import { store } from "../redux/store"
 
@@ -31,3 +32,4 @@ axiosLibrary.interceptors.response.use(
 )
 
 export { axiosLibrary }
+
