@@ -18,30 +18,34 @@ import {
   Image,
   FormErrorMessage,
   Link as ChakraLink,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
 } from "@chakra-ui/react"
 import { useState, useEffect } from "react"
 import { axiosLibrary } from "../api"
 import { useFormik } from "formik"
 import axios from "axios"
 import * as Yup from "yup"
-import { Link } from "react-router-dom"
+import EditModal from "../components/ModalEdit"
 
 const CategoryList = () => {
   const [categorys, setCategorys] = useState([])
+
+  const [openModal, setOpenModal] = useState(false)
+  const [nameEdit, setNameEdit] = useState("")
+  const [idEdit, setIdEdit] = useState("")
 
   const fetchCategory = async () => {
     try {
       const response = await axiosLibrary.get("/categories")
 
       setCategorys(response.data.data)
-
-      // formik.setFieldValue("title", response.data.title)
-      // formik.setFieldValue("author", response.data.author)
-      // formik.setFieldValue("publish_year", response.data.publish_year)
-      // formik.setFieldValue("stock", response.data.stock)
-      // formik.setFieldValue("image_url", response.data.image_url)
-      // formik.setFieldValue("synopsis", response.data.synopsis)
-      // formik.setFieldValue("isbn", response.data.isbn)
     } catch (err) {
       console.log(err)
     }
@@ -56,6 +60,13 @@ const CategoryList = () => {
       console.log(err)
     }
   }
+
+  const handleEdit = (name, id) => {
+    setOpenModal(true)
+    setNameEdit(name)
+    setIdEdit(id)
+  }
+
   const renderCategorys = () => {
     return categorys.map((val) => {
       return (
@@ -63,11 +74,13 @@ const CategoryList = () => {
           <Td>{val.name}</Td>
 
           <Td>
-            <Link to={`/categories/${val.id}`}>
-              <Button mx="3" colorScheme="blue">
-                Edit
-              </Button>
-            </Link>
+            <Button
+              onClick={() => handleEdit(val.name, val.id)}
+              mx="3"
+              colorScheme="blue"
+            >
+              Edit
+            </Button>
 
             <Button
               onClick={() => deleteBtnHandler(val.id)}
@@ -99,6 +112,7 @@ const CategoryList = () => {
         }
 
         await axiosLibrary.post(`/Categories/`, newCategory)
+        formik.setFieldValue(name, "")
 
         fetchCategory()
         toast({
@@ -121,44 +135,57 @@ const CategoryList = () => {
   })
   const formChangeHandler = ({ target }) => {
     const { name, value } = target
+    console.log(name, value, "!!!!!")
 
     formik.setFieldValue(name, value)
   }
   const toast = useToast()
 
   return (
-    <Container maxW="container.lg">
-      <Text fontWeight="bold" fontSize="4xl" mb="16">
-        Category List
-      </Text>
+    <>
+      <Modal isOpen={openModal} onClose={() => setOpenModal(false)}>
+        <EditModal
+          nameEdit={nameEdit}
+          setNameEdit={setNameEdit}
+          idEdit={idEdit}
+          setOpenModal={setOpenModal}
+          fetchCategory={fetchCategory}
+        />
+      </Modal>
 
-      <Grid templateColumns="repeat(3, 1fr)" columnGap="4">
-        <GridItem>
-          <FormControl isInvalid={formik.errors.name}>
-            <FormLabel>Name</FormLabel>
-            <Input name="name" onChange={formChangeHandler} />
-            <FormErrorMessage>{formik.errors.name}</FormErrorMessage>
-          </FormControl>
-        </GridItem>
-      </Grid>
-      <Button
-        disabled={formik.isSubmitting}
-        onClick={formik.handleSubmit}
-        my="4"
-        colorScheme="teal"
-      >
-        Add Category
-      </Button>
+      <Container maxW="container.lg">
+        <Text fontWeight="bold" fontSize="4xl" mb="16">
+          Category List
+        </Text>
 
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Name</Th>
-          </Tr>
-        </Thead>
-        <Tbody>{renderCategorys()}</Tbody>
-      </Table>
-    </Container>
+        <Grid templateColumns="repeat(3, 1fr)" columnGap="4">
+          <GridItem>
+            <FormControl isInvalid={formik.errors.name}>
+              <FormLabel>Name</FormLabel>
+              <Input name="name" onChange={formChangeHandler} />
+              <FormErrorMessage>{formik.errors.name}</FormErrorMessage>
+            </FormControl>
+          </GridItem>
+        </Grid>
+        <Button
+          disabled={formik.isSubmitting}
+          onClick={formik.handleSubmit}
+          my="4"
+          colorScheme="teal"
+        >
+          Add Category
+        </Button>
+
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>Name</Th>
+            </Tr>
+          </Thead>
+          <Tbody>{renderCategorys()}</Tbody>
+        </Table>
+      </Container>
+    </>
   )
 }
 

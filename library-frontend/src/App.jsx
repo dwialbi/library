@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router-dom"
 // import HomePage from "./pages/Home"
 import Cart from "./pages/Cart"
 import GuestRoute from "./components/GuestRoute"
-import CategoryEdit from "./pages/CategoryEdit"
+
 import CategoryList from "./pages/CategoryList"
 
 const App = () => {
@@ -25,14 +25,6 @@ const App = () => {
           element={
             <GuestRoute>
               <CategoryList />
-            </GuestRoute>
-          }
-        />
-        <Route
-          path="/categories/:id"
-          element={
-            <GuestRoute>
-              <CategoryEdit />
             </GuestRoute>
           }
         />
